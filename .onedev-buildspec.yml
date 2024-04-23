@@ -5,7 +5,6 @@ jobs:
   - !PushRepository
     name: push
     remoteUrl: https://github.com/MrLinkDev/Lithium
-    userName: sasha2000.gorbunov@gmail.com
     passwordSecret: access-token
     force: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
