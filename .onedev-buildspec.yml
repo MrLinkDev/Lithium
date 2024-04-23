@@ -1,0 +1,15 @@
+version: 31
+jobs:
+- name: Push to Github
+  steps:
+  - !PushRepository
+    name: push
+    remoteUrl: https://github.com/MrLinkDev/Lithium
+    userName: sasha2000.gorbunov@gmail.com
+    passwordSecret: access-token
+    force: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
