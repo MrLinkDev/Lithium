@@ -15,6 +15,7 @@
         <Copyright>Alexander Gorbunov &lt;sasha2000.gorbunov@gmail.com&gt;</Copyright>
         <PackageProjectUrl>https://github.com/MrLinkDev/Lithium</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/MrLinkDev/Lithium/blob/develop/LICENSE.txt</PackageLicenseUrl>
+        <PackageId>Link.Lithium</PackageId>
     </PropertyGroup>
 
 </Project>
