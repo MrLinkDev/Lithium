@@ -1,10 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <ImplicitUsings>enable</ImplicitUsings>
+        <TargetFrameworks>net8.0-windows;net7.0-windows</TargetFrameworks>
+        <Title>Logger library for .NET</Title>
+        <Authors>Alexander Gorbunov</Authors>
+        <Description>This library provides you to log messages into console and into file in AppData directory</Description>
+        <Company>Link</Company>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
     </PropertyGroup>
 
 </Project>
