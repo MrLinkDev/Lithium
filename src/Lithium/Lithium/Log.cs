@@ -1,4 +1,7 @@
-﻿using System;
+﻿/// This file is part of Lithium.
+/// Copyright (c) 2024 Alexander Gorbunov <sasha2000.gorbunov@gmail.com>
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
