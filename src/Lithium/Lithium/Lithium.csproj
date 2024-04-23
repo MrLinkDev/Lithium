@@ -11,6 +11,10 @@
         <Company>Link</Company>
         <AssemblyVersion>1.0.0</AssemblyVersion>
         <FileVersion>1.0.0</FileVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Copyright>Alexander Gorbunov &lt;sasha2000.gorbunov@gmail.com&gt;</Copyright>
+        <PackageProjectUrl>https://github.com/MrLinkDev/Lithium</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/MrLinkDev/Lithium/blob/develop/LICENSE.txt</PackageLicenseUrl>
     </PropertyGroup>
 
 </Project>
