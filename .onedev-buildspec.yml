@@ -8,6 +8,9 @@ jobs:
     passwordSecret: access-token
     force: false
     condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger
+    projects: TESART/Chemical/Lithium
   retryCondition: never
   maxRetries: 3
   retryDelay: 30
