@@ -4,10 +4,10 @@ Lithium - is a simple logger library for your .NET project.
 ### NuGet
 You can install Lithium library from NuGet using command:
 
-    dotnet add package Link.Lithium --version 1.0.1
+    dotnet add package Alexander.Gorbunov.Lithium --version 1.0.1
 
 ## Usage example
-Below this article you can found usage example for Lithium logger
+Below this article you can find usage example for Lithium logger
 
     using Lithium;  
     using Lithium.Enums;  
