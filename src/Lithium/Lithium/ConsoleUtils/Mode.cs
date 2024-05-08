@@ -36,7 +36,9 @@ public static class Mode {
 
     #region Variables
 
+    /// Флаг, который показывает, что в переменных системы найдена переменная NO_COLOR
     private static bool isNoColor;
+    /// Флаг, который показывает, что текст может быть цветным
     private static bool isColored;
 
     #endregion
@@ -67,10 +69,17 @@ public static class Mode {
         return noColor;
     }
 
+    /// <summary>
+    /// Проверяет, можно ли изменить цвет в консоли
+    /// </summary>
+    /// <returns>Если цвет можно изменить, возвращает true</returns>
     public static bool IsColorEnabled() {
         return !isNoColor && isColored;
     }
 
+    /// <summary>
+    /// Включает возможность выводить цвет в консоли
+    /// </summary>
     public static void EnableColor() {
         isNoColor = IsNoColorExists();
 
@@ -85,6 +94,9 @@ public static class Mode {
         isColored = SetConsoleMode(stdHandle, mode);
     }
 
+    /// <summary>
+    /// Выключает возможность выводить цвет в консоли
+    /// </summary>
     public static void DisableColor() {
         isColored = false;
     }
