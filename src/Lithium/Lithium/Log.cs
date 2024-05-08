@@ -101,6 +101,8 @@ public static class Log {
     /// Уровень логирования. Сообщения, которые имеют уровень ниже установленного, игнорируются
     /// </param>
     public static void Start(Level logLevel) {
+        ConsoleUtils.Mode.EnableColor();
+        
         level = logLevel;
         
         token = tokenSource.Token;
