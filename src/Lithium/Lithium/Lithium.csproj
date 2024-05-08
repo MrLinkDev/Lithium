@@ -9,15 +9,15 @@
         <Authors>Alexander Gorbunov</Authors>
         <Description>This library provides you to log messages into console and into file in AppData directory</Description>
         <Company>Link</Company>
-        <AssemblyVersion>1.0.1</AssemblyVersion>
-        <FileVersion>1.0.1</FileVersion>
+        <AssemblyVersion>1.0.3</AssemblyVersion>
+        <FileVersion>1.0.3</FileVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Copyright>Alexander Gorbunov &lt;sasha2000.gorbunov@gmail.com&gt;</Copyright>
         <RepositoryUrl>https://github.com/MrLinkDev/Lithium</RepositoryUrl>
         <PackageLicenseUrl>https://github.com/MrLinkDev/Lithium/blob/develop/LICENSE.txt</PackageLicenseUrl>
         <PackageId>Alexander.Gorbunov.Lithium</PackageId>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>1.0.2</Version>
+        <Version>1.0.3</Version>
     </PropertyGroup>
 
     <ItemGroup>
