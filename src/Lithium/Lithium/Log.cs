@@ -7,7 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Lithium.ConsoleUtils;
 using Lithium.Enums;
+using Lithium.LogUtils;
 
 namespace Lithium;
 
@@ -37,12 +39,12 @@ public static class Log {
     /// <summary>
     /// Коллекция сообщений, которые ждут отправки
     /// </summary>
-    private static readonly Queue<string> messageQueue = new ();
+    private static readonly Queue<LogMessage> messageQueue = new ();
 
     /// <summary>
-    /// Сообщение, которое логируется
+    /// Сообщение, которое логируется в консоль
     /// </summary>
-    private static string? selectedMessage;
+    private static LogMessage selectedLogMessage;
 
     #endregion
 
@@ -182,13 +184,23 @@ public static class Log {
             return;
         }
         
-        string time = GetCurrentTime(TimeFormat.CONSOLE);
-        string tag = GetTag(logLevel);
+        string time = GetCurrentTime(DataFormat.CONSOLE);
+        
+        string consoleTag = GetTag(logLevel, DataFormat.CONSOLE);
+        string fileTag = GetTag(logLevel, DataFormat.FILE);
 
-        string formattedMessage = $"{time} [{tag}] {message}";
+        string consoleMessage = logLevel switch {
+            Level.WARNING => message.Color(Defaults.WARNING_COLOR),
+            Level.ERROR => message.Color(Defaults.ERROR_COLOR),
+            _ => message
+        };
+
+        LogMessage logMessage = new LogMessage(
+            String.Format(Defaults.MESSAGE_MASK, time, consoleTag, consoleMessage),
+            String.Format(Defaults.MESSAGE_MASK, time, fileTag, message));
         
         lock (queueMutex) {
-            messageQueue.Enqueue(formattedMessage);
+            messageQueue.Enqueue(logMessage);
             resetEvent.Set();
         } 
     }
@@ -197,10 +209,10 @@ public static class Log {
         while (!token.IsCancellationRequested) {
             resetEvent.WaitOne();
 
-            while (messageQueue.TryDequeue(out selectedMessage)) {
+            while (messageQueue.TryDequeue(out selectedLogMessage)) {
                 lock (queueMutex) {
-                    WriteIntoConsole(selectedMessage);
-                    WriteIntoFile(selectedMessage);
+                    WriteIntoConsole(selectedLogMessage.Console);
+                    WriteIntoFile(selectedLogMessage.File);
                 }
             }
 
@@ -255,7 +267,7 @@ public static class Log {
 
         var logFileName = Path.Join(
             logsDirPath, 
-            String.Concat(GetCurrentTime(TimeFormat.FILE), $"_{logFileNumber++,0:D3}", Defaults.FILE_EXTENSION));
+            String.Concat(GetCurrentTime(DataFormat.FILE), $"_{logFileNumber++,0:D3}", Defaults.FILE_EXTENSION));
 
         fileWriter = new StreamWriter(logFileName);
         fileInfo = new FileInfo(logFileName);
@@ -285,31 +297,44 @@ public static class Log {
     /// </summary>
     /// <param name="format">Тип требуемого формата</param>
     /// <returns>Строка в требуемом формате</returns>
-    private static string GetCurrentTime(TimeFormat format) {
+    private static string GetCurrentTime(DataFormat format) {
         DateTime now = DateTime.Now;
         
         return format switch {
-            TimeFormat.CONSOLE => now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-            TimeFormat.FILE => now.ToString("yyyyMMdd_HHmmss"),
+            DataFormat.CONSOLE => now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+            DataFormat.FILE => now.ToString("yyyyMMdd_HHmmss"),
             
             _ => now.ToString("yyyy_MM_dd_HH_mm_ss")
         };
     }
-    
+
     /// <summary>
     /// Получение тега уровня сообщения
     /// </summary>
     /// <param name="logLevel">Уровень сообщения</param>
+    /// <param name="format">Формат сообщения</param>
     /// <returns>Тег уровня сообщения</returns>
-    private static string GetTag(Level logLevel) {
-        return logLevel switch {
-            Level.ERROR => "ERR",
-            Level.WARNING => "WRN",
-            Level.INFO => "INF",
-            Level.DEBUG => "DBG",
-            Level.TRACE => "TRC",
+    private static string GetTag(Level logLevel, DataFormat format) {
+        if (format == DataFormat.CONSOLE && Mode.IsColorEnabled()) {
+            return logLevel switch {
+                Level.ERROR => " E ".Color(Colors.Black, Defaults.ERROR_COLOR),
+                Level.WARNING => " W ".Color(Colors.Black, Defaults.WARNING_COLOR),
+                Level.INFO => " I ".Color(Colors.Black, Defaults.INFO_COLOR),
+                Level.DEBUG => " D ".Color(Colors.Black, Defaults.DEBUG_COLOR),
+                Level.TRACE => " T ".Color(Colors.Black, Defaults.TRACE_COLOR),
             
-            _ => "???"
+                _ => "???"
+            };
+        }
+        
+        return logLevel switch {
+            Level.ERROR => "[ERR]",
+            Level.WARNING => "[WRN]",
+            Level.INFO => "[INF]",
+            Level.DEBUG => "[DBG]",
+            Level.TRACE => "[TRC]",
+            
+            _ => "[???]"
         };
     }
     

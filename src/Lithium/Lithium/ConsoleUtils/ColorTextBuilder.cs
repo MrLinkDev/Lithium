@@ -1,11 +1,14 @@
-﻿using System.Text;
+﻿/// This file is part of Lithium.
+/// Copyright (c) 2024 Alexander Gorbunov <sasha2000.gorbunov@gmail.com>
+
+using System.Text;
 
 namespace Lithium.ConsoleUtils;
 
 /// <summary>
 /// Класс, в котором реализованы методы для изменения цвета текста/фона в консоли
 /// </summary>
-public static class ColorBuilder {
+public static class ColorTextBuilder {
     /// Сброс 
     private const string RESET = "\x1b[0m";
     
@@ -29,6 +32,10 @@ public static class ColorBuilder {
     /// <param name="target">Объект, на который направлено изменение цвета</param>
     /// <returns>Строка с необходимым цветом</returns>
     public static string Color(this string text, Color color, ColorTarget target = ColorTarget.FOREGROUND) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
         StringBuilder builder = new StringBuilder();
         
         builder.AppendFormat(
@@ -51,6 +58,10 @@ public static class ColorBuilder {
     /// <param name="target">Объект, на который направлено изменение цвета</param>
     /// <returns>Строка с необходимым цветом</returns>
     public static string Color(this string text, byte r, byte g, byte b, ColorTarget target = ColorTarget.FOREGROUND) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
         StringBuilder builder = new StringBuilder();
         
         builder.AppendFormat(
@@ -71,6 +82,10 @@ public static class ColorBuilder {
     /// <param name="target">Объект, на который направлено изменение цвета</param>
     /// <returns>Строка с необходимым цветом</returns>
     public static string Color(this string text, short colorNum, ColorTarget target = ColorTarget.FOREGROUND) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
         StringBuilder builder = new StringBuilder();
         
         builder.AppendFormat(
@@ -99,6 +114,10 @@ public static class ColorBuilder {
     /// <param name="bB">Синяя составляющая цвета фона</param>
     /// <returns>Строка с необходимым цветом</returns>
     public static string Color(this string text, byte rF, byte gF, byte bF, byte rB, byte gB, byte bB) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
         StringBuilder builder = new StringBuilder();
         
         builder.AppendFormat(FG_COLOR_RGB_MASK, rF, gF, bF);
@@ -118,6 +137,10 @@ public static class ColorBuilder {
     /// <param name="background">Цвет фона в формате RGB</param>
     /// <returns>Строка с необходимым цветом</returns>
     public static string Color(this string text, Color foreground, Color background) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
         StringBuilder builder = new StringBuilder();
         
         builder.AppendFormat(
@@ -137,10 +160,68 @@ public static class ColorBuilder {
     /// Изменяет цвет текста и фона
     /// </summary>
     /// <param name="text">Текст, у которого будет изменён цвет символов и фона</param>
+    /// <param name="foreground">Цвет символов в формате RGB</param>
+    /// <param name="bgNum">Цвет фона в виде числового кода</param>
+    /// <returns>Строка с необходимым цветом</returns>
+    public static string Color(this string text, Color foreground, byte bgNum) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
+        StringBuilder builder = new StringBuilder();
+        
+        builder.AppendFormat(
+            FG_COLOR_RGB_MASK, 
+            foreground.R, foreground.G, foreground.B);
+        builder.AppendFormat(
+            BG_COLOR_NUM_MASK, 
+            bgNum);
+        
+        builder.Append(text);
+        builder.Append(RESET);
+
+        return builder.ToString();
+    }
+    
+    /// <summary>
+    /// Изменяет цвет текста и фона
+    /// </summary>
+    /// <param name="text">Текст, у которого будет изменён цвет символов и фона</param>
+    /// <param name="fgNum">Цвет символов в виде числового кода</param>
+    /// <param name="background">Цвет фона в формате RGB</param>
+    /// <returns>Строка с необходимым цветом</returns>
+    public static string Color(this string text, byte fgNum, Color background) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
+        StringBuilder builder = new StringBuilder();
+        
+        builder.AppendFormat(
+            FG_COLOR_NUM_MASK, 
+            fgNum);
+        builder.AppendFormat(
+            BG_COLOR_RGB_MASK, 
+            background.R, background.G, background.B);
+        
+        builder.Append(text);
+        builder.Append(RESET);
+
+        return builder.ToString();
+    }
+    
+    /// <summary>
+    /// Изменяет цвет текста и фона
+    /// </summary>
+    /// <param name="text">Текст, у которого будет изменён цвет символов и фона</param>
     /// <param name="fgNum">Цвет символов в виде числового кода</param>
     /// <param name="bgNum">Цвет фона в виде числового кода</param>
     /// <returns>Строка с необходимым цветом</returns>
     public static string Color(this string text, byte fgNum, byte bgNum) {
+        if (!Mode.IsColorEnabled()) {
+            return text;
+        }
+        
         StringBuilder builder = new StringBuilder();
         
         builder.AppendFormat(
