@@ -46,6 +46,10 @@ public static class Mode {
     /// </summary>
     /// <returns>Если переменная не существует, возвращает true. Если существует - возвращает её значение</returns>
     private static bool IsNoColorExists() {
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            return true;
+        }
+        
         string? value = null;
         bool noColor = false;
 
