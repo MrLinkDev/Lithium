@@ -32,6 +32,16 @@ public static class Log {
     #region LogFields
 
     /// <summary>
+    /// Флаг, показывающий, что вывод в консоль включен
+    /// </summary>
+    private static bool isConsoleEnabled = true;
+
+    /// <summary>
+    /// Флаг, показывающий, что вывод в файл включен
+    /// </summary>
+    private static bool isFileEnabled = true;
+
+    /// <summary>
     /// Выбранный уровень логирования
     /// </summary>
     private static Level level;
@@ -95,24 +105,33 @@ public static class Log {
     private static readonly ManualResetEvent resetEvent = new(false);
 
     #endregion
-    
+
     /// <summary>
     /// Инициализация логгера
     /// </summary>
     /// <param name="logLevel">
     /// Уровень логирования. Сообщения, которые имеют уровень ниже установленного, игнорируются
     /// </param>
-    public static void Start(Level logLevel) {
-        ConsoleUtils.Mode.EnableColor();
-        
+    /// <param name="enableConsole">Флаг, показывающий, что вывод в консоль включен</param>
+    /// <param name="enableFile">Флаг, показывающий, что вывод в файл включен</param>
+    public static void Start(Level logLevel = Level.INFO, bool enableConsole = true, bool enableFile = true) {
         level = logLevel;
         
-        token = tokenSource.Token;
+        isConsoleEnabled = enableConsole;
+        isFileEnabled = enableFile;
         
-        PrepareFile();
+        token = tokenSource.Token;
+
+        if (isFileEnabled) {
+            PrepareFile();
+        }
 
         thread = new Thread(Loop);
         thread.Start();
+
+        if (isConsoleEnabled) {
+            Mode.EnableColor();
+        }
     }
 
     /// <summary>
@@ -123,9 +142,11 @@ public static class Log {
         resetEvent.Set();
         
         thread.Join();
-        
-        fileWriter.Flush();
-        fileWriter.Close();
+
+        if (isFileEnabled) {
+            fileWriter.Flush();
+            fileWriter.Close();
+        }
     }
 
     #region PreDefinedLogMethods
@@ -186,18 +207,25 @@ public static class Log {
         
         string time = GetCurrentTime(DataFormat.CONSOLE);
         
-        string consoleTag = GetTag(logLevel, DataFormat.CONSOLE);
-        string fileTag = GetTag(logLevel, DataFormat.FILE);
+        string consoleTag = String.Empty;
+        string fileTag = String.Empty;
 
-        string consoleMessage = logLevel switch {
-            Level.WARNING => message.Color(Defaults.WARNING_COLOR),
-            Level.ERROR => message.Color(Defaults.ERROR_COLOR),
-            _ => message
-        };
+        string consoleMessage = String.Empty;
+
+        if (isConsoleEnabled) {
+            consoleTag = GetTag(logLevel, DataFormat.CONSOLE);
+            consoleMessage = logLevel switch {
+                Level.WARNING => message.Color(Defaults.WARNING_COLOR),
+                Level.ERROR => message.Color(Defaults.ERROR_COLOR),
+                _ => message
+            };
+        }
+        
+        if (isFileEnabled) fileTag = GetTag(logLevel, DataFormat.FILE);
 
         LogMessage logMessage = new LogMessage(
-            String.Format(Defaults.MESSAGE_MASK, time, consoleTag, consoleMessage),
-            String.Format(Defaults.MESSAGE_MASK, time, fileTag, message));
+            isConsoleEnabled ? String.Format(Defaults.MESSAGE_MASK, time, consoleTag, consoleMessage) : null,
+            isFileEnabled ? String.Format(Defaults.MESSAGE_MASK, time, fileTag, message) : null);
         
         lock (queueMutex) {
             messageQueue.Enqueue(logMessage);
@@ -211,8 +239,13 @@ public static class Log {
 
             while (messageQueue.TryDequeue(out selectedLogMessage)) {
                 lock (queueMutex) {
-                    WriteIntoConsole(selectedLogMessage.Console);
-                    WriteIntoFile(selectedLogMessage.File);
+                    if (isConsoleEnabled && selectedLogMessage.Console != null) {
+                        WriteIntoConsole(selectedLogMessage.Console);
+                    }
+
+                    if (isFileEnabled && selectedLogMessage.File != null) {
+                        WriteIntoFile(selectedLogMessage.File);
+                    }
                 }
             }
 

@@ -91,16 +91,15 @@ public static class Mode {
         }
 
         IntPtr stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-        GetConsoleMode(stdHandle, out var mode);
+        
+        if (!GetConsoleMode(stdHandle, out var mode)) {
+            if (stdHandle != -1) {
+                isColored = true;
+                return;
+            }
+        }
 
         mode |= ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         isColored = SetConsoleMode(stdHandle, mode);
-    }
-
-    /// <summary>
-    /// Выключает возможность выводить цвет в консоли
-    /// </summary>
-    public static void DisableColor() {
-        isColored = false;
     }
 }
