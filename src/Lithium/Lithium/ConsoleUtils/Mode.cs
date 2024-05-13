@@ -21,6 +21,9 @@ public static class Mode {
     [DllImport("kernel32.dll")]
     private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
     
+    [DllImport("kernel32.dll")]
+    public static extern uint GetLastError();
+    
     #endregion
 
     #region Constants
@@ -91,7 +94,13 @@ public static class Mode {
         }
 
         IntPtr stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-        GetConsoleMode(stdHandle, out var mode);
+        
+        if (!GetConsoleMode(stdHandle, out var mode)) {
+            if (stdHandle != -1) {
+                isColored = true;
+                return;
+            }
+        }
 
         mode |= ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         isColored = SetConsoleMode(stdHandle, mode);
