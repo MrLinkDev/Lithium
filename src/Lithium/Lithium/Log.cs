@@ -68,12 +68,12 @@ public static class Log {
     /// <summary>
     /// Объект, предоставляющий информацию о файле
     /// </summary>
-    private static FileInfo fileInfo;
+    private static FileInfo fileInfo = null!;
     
     /// <summary>
     /// Объект потока для записи в файл
     /// </summary>
-    private static StreamWriter fileWriter;
+    private static StreamWriter fileWriter = null!;
 
     #endregion
 
@@ -82,7 +82,7 @@ public static class Log {
     /// <summary>
     /// Поток для логгера
     /// </summary>
-    private static Thread thread;
+    private static Thread thread = null!;
     
     /// <summary>
     /// Источник токена отмены
