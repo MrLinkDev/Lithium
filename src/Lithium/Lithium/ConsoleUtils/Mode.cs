@@ -105,11 +105,4 @@ public static class Mode {
         mode |= ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
         isColored = SetConsoleMode(stdHandle, mode);
     }
-
-    /// <summary>
-    /// Выключает возможность выводить цвет в консоли
-    /// </summary>
-    public static void DisableColor() {
-        isColored = false;
-    }
 }
